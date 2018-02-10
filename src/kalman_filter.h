@@ -64,6 +64,12 @@ public:
    */
   void UpdateEKF(const Eigen::VectorXd &z);
 
+  /**
+   * Estimate new state with y
+   * @param y The  difference between prediceted z and measured z
+   */
+  //void Estimate(const Eigen::VectorXd &y);
+  void Estimate(Eigen::VectorXd &y);
 };
 
 #endif /* KALMAN_FILTER_H_ */
