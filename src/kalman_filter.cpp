@@ -89,12 +89,11 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 }
 
 
-//void KalmanFilter::Estimate(const VectorXd &y) {
 void KalmanFilter::Estimate(VectorXd &y) {
   MatrixXd S = H_ * P_ * H_.transpose() + R_;
   MatrixXd K = P_* H_.transpose() * S.inverse();
 
-  //double before_y1 = y(1);
+  //double previous_y1 = y(1);
 
   while (y(1) < -M_PI || M_PI < y(1)) {
     if (y(1) < -M_PI) {
@@ -107,8 +106,8 @@ void KalmanFilter::Estimate(VectorXd &y) {
   }
 
   /*
-  if (abs(before_y1-y(1)) > 0.0001) {
-    cout << "[before] y(1) = phi is " << before_y1/M_PI << "*M_PI" << endl;
+  if (abs(previous_y1-y(1)) > 0.0001) {
+    cout << "[before] y(1) = phi is " << previous_y1/M_PI << "*M_PI" << endl;
     cout << "[after] y(1) = phi is " << y(1)/M_PI << "*M_PI" << endl <<endl;
   }
   */
