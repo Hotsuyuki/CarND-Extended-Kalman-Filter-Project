@@ -54,7 +54,7 @@ void KalmanFilter::Update(const VectorXd &z) {
   // `z`: raw measurement
   // `y`: the difference between raw measurement and prediction
   VectorXd y = z - z_pred;
-  Estimate(y);
+  Estimate(y, "LASER");
 }
 
 
@@ -85,32 +85,26 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   VectorXd z_pred(3);
   z_pred << rho, phi, rho_dot;
   VectorXd y = z - z_pred;
-  Estimate(y);
+  Estimate(y, "RADAR");
 }
 
 
-void KalmanFilter::Estimate(VectorXd &y) {
-  MatrixXd S = H_ * P_ * H_.transpose() + R_;
-  MatrixXd K = P_* H_.transpose() * S.inverse();
+void KalmanFilter::Estimate(VectorXd &y, const string &sensor_type) {
+  MatrixXd Ht = H_.transpose();
+  MatrixXd S = H_ * P_ * Ht + R_;
+  MatrixXd K = P_* Ht * S.inverse();
 
-  //double previous_y1 = y(1);
-
-  while (y(1) < -M_PI || M_PI < y(1)) {
-    if (y(1) < -M_PI) {
-      cout << "y(1) = phi is less than M_PI" << endl;
-      y(1) += 2 * M_PI;
-    } else if (M_PI < y(1)) {
-      cout << "y(1) = phi is more than M_PI" << endl;
-      y(1) -= 2 * M_PI;
+  if (sensor_type == "RADAR") {
+    while (y(1) < -M_PI || M_PI < y(1)) {
+      if (y(1) < -M_PI) {
+        cout << "y(1) = phi is less than M_PI" << endl;
+        y(1) += 2 * M_PI;
+      } else if (M_PI < y(1)) {
+        cout << "y(1) = phi is more than M_PI" << endl;
+        y(1) -= 2 * M_PI;
+      }
     }
   }
-
-  /*
-  if (abs(previous_y1-y(1)) > 0.0001) {
-    cout << "[before] y(1) = phi is " << previous_y1/M_PI << "*M_PI" << endl;
-    cout << "[after] y(1) = phi is " << y(1)/M_PI << "*M_PI" << endl <<endl;
-  }
-  */
 
   // new estimate
   x_ = x_ + (K * y);
