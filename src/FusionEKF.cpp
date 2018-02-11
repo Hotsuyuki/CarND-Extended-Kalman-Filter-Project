@@ -183,13 +183,12 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       // calculate the jacobian matrix
       Tools tools;
       Hj_ = tools.CalculateJacobian(ekf_.x_);
+      ekf_.H_ = Hj_;
+      ekf_.R_ = R_radar_;
+      ekf_.UpdateEKF(measurement_pack.raw_measurements_);
     } else {
       cout << "Divided by zero!!! Skip updating the jacobian matrix..." << endl;
     }
-
-    ekf_.H_ = Hj_;
-    ekf_.R_ = R_radar_;
-    ekf_.UpdateEKF(measurement_pack.raw_measurements_);
   }
 
   // print the output
