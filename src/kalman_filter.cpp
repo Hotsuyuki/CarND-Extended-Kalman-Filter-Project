@@ -94,7 +94,8 @@ void KalmanFilter::Estimate(VectorXd &y) {
   MatrixXd S = H_ * P_ * H_.transpose() + R_;
   MatrixXd K = P_* H_.transpose() * S.inverse();
 
-  double before_y1 = y(1);
+  //double before_y1 = y(1);
+
   while (y(1) < -M_PI || M_PI < y(1)) {
     if (y(1) < -M_PI) {
       cout << "y(1) = phi is less than M_PI" << endl;
@@ -104,6 +105,7 @@ void KalmanFilter::Estimate(VectorXd &y) {
       y(1) -= 2 * M_PI;
     }
   }
+
   /*
   if (abs(before_y1-y(1)) > 0.0001) {
     cout << "[before] y(1) = phi is " << before_y1/M_PI << "*M_PI" << endl;
